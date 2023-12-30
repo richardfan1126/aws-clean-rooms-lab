@@ -12,7 +12,7 @@ Resources:
     UpdateReplacePolicy: Retain
     Properties:
       CollaborationIdentifier: !Ref CollaborationId
-      QueryLogStatus: DISABLED
+      QueryLogStatus: ENABLED
       DefaultResultConfiguration:
         OutputConfiguration:
           S3:

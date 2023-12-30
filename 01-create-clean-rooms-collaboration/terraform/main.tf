@@ -23,7 +23,7 @@ resource "aws_cleanrooms_collaboration" "clean_rooms_lab_analysis_collab" {
   description              = "clean_rooms_lab_analysis_collab"
   creator_member_abilities = []
   creator_display_name     = "member-data-source"
-  query_log_status         = "DISABLED"
+  query_log_status         = "ENABLED"
 
   member {
     account_id       = data.aws_caller_identity.account_2.account_id
@@ -37,7 +37,7 @@ resource "aws_cloudformation_stack" "members_table" {
   template_body = file("${path.module}/templates/create-members-aggregation-table.yaml")
 
   parameters = {
-    TableName = "members_aggregation"
+    TableName        = "members_aggregation"
     GlueDatabaseName = split(":", data.terraform_remote_state.prepare_glue_database.outputs.glue_database_account_1.id)[1]
     GlueTableName    = split(":", data.terraform_remote_state.prepare_glue_database.outputs.members_table.id)[2]
   }
@@ -78,7 +78,7 @@ resource "aws_iam_role" "members_table_association_role" {
         }
         Condition = {
           StringLike = {
-            "sts:ExternalId" = "arn:aws:*:*:*:dbuser:*/${aws_cloudformation_stack.collab_membership_account_1.outputs.MembershipId}*"
+            "sts:ExternalId" = "arn:aws:*:*:*:dbuser:*/${aws_cloudformation_stack.collab_membership_account_2.outputs.MembershipId}*"
           }
         }
       },
@@ -138,6 +138,11 @@ resource "aws_iam_role" "members_table_association_role" {
           ]
           Effect   = "Allow"
           Resource = data.terraform_remote_state.prepare_glue_database.outputs.data_bucket_account_1.arn
+          Condition = {
+            "StringEquals" = {
+              "s3:ResourceAccount" = data.aws_caller_identity.account_1.account_id
+            }
+          }
         },
         {
           Action = [
@@ -145,6 +150,11 @@ resource "aws_iam_role" "members_table_association_role" {
           ]
           Effect   = "Allow"
           Resource = "${data.terraform_remote_state.prepare_glue_database.outputs.data_bucket_account_1.arn}/airline-loyalty-program/members/*"
+          Condition = {
+            "StringEquals" = {
+              "s3:ResourceAccount" = data.aws_caller_identity.account_1.account_id
+            }
+          }
         }
       ]
     })

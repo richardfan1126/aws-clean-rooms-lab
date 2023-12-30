@@ -10,7 +10,7 @@ Resources:
     UpdateReplacePolicy: Retain
     Properties:
       CollaborationIdentifier: !Ref CollaborationId
-      QueryLogStatus: DISABLED
+      QueryLogStatus: ENABLED
 Outputs:
   MembershipId:
     Value: !GetAtt CollaborationMembership.MembershipIdentifier
