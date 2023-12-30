@@ -1,0 +1,20 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  CollaborationId:
+    Type: String
+  ResultBucketName:
+    Type: String
+Resources:
+  CollaborationMembership:
+    Type: AWS::CleanRooms::Membership
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      CollaborationIdentifier: !Ref CollaborationId
+      QueryLogStatus: DISABLED
+      DefaultResultConfiguration:
+        OutputConfiguration:
+          S3:
+            Bucket: !Ref ResultBucketName
+            ResultFormat: CSV

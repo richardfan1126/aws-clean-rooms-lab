@@ -1,23 +1,19 @@
-data "aws_caller_identity" "current" {}
-
-resource "random_string" "uid" {
-  length  = 4
-  upper   = false
-  special = false
+resource "aws_s3_bucket" "query_result_bucket_account_1" {
+  bucket = "${data.aws_caller_identity.account_1.account_id}-aws-clean-rooms-lab-result-${random_string.uid.id}"
 }
 
-resource "aws_s3_bucket" "data_bucket" {
-  bucket = "${data.aws_caller_identity.current.account_id}-aws-clean-rooms-lab-${random_string.uid.id}"
+resource "aws_s3_bucket" "data_bucket_account_1" {
+  bucket = "${data.aws_caller_identity.account_1.account_id}-aws-clean-rooms-lab-data-${random_string.uid.id}"
 }
 
 resource "aws_s3_object" "members_data" {
-  bucket = aws_s3_bucket.data_bucket.id
+  bucket = aws_s3_bucket.data_bucket_account_1.id
   key    = "airline-loyalty-program/members/members.json"
-  source = "${path.module}/../../dataset/members.json"
+  source = "${path.module}/../dataset/members.json"
 }
 
-resource "aws_glue_catalog_database" "database" {
-  name = "aws-clean-rooms-lab-${random_string.uid.id}"
+resource "aws_glue_catalog_database" "database_account_1" {
+  name = "aws-clean-rooms-lab"
 
   create_table_default_permission {
     permissions = ["ALL"]
@@ -30,10 +26,10 @@ resource "aws_glue_catalog_database" "database" {
 
 resource "aws_glue_catalog_table" "members_table" {
   name          = "members"
-  database_name = aws_glue_catalog_database.database.name
+  database_name = aws_glue_catalog_database.database_account_1.name
 
   storage_descriptor {
-    location      = "s3://${aws_s3_bucket.data_bucket.id}/airline-loyalty-program/members/"
+    location      = "s3://${aws_s3_bucket.data_bucket_account_1.id}/airline-loyalty-program/members/"
     input_format  = "org.apache.hadoop.mapred.TextInputFormat"
     output_format = "org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat"
 

@@ -1,23 +1,27 @@
-data "aws_caller_identity" "current" {}
+resource "aws_s3_bucket" "query_result_bucket_account_2" {
+  provider = aws.account_2
 
-resource "random_string" "uid" {
-  length  = 4
-  upper   = false
-  special = false
+  bucket = "${data.aws_caller_identity.account_2.account_id}-aws-clean-rooms-lab-result-${random_string.uid.id}"
 }
 
-resource "aws_s3_bucket" "data_bucket" {
-  bucket = "${data.aws_caller_identity.current.account_id}-aws-clean-rooms-lab-${random_string.uid.id}"
+resource "aws_s3_bucket" "data_bucket_account_2" {
+  provider = aws.account_2
+  
+  bucket = "${data.aws_caller_identity.account_2.account_id}-aws-clean-rooms-lab-data-${random_string.uid.id}"
 }
 
 resource "aws_s3_object" "flight_history_data" {
-  bucket = aws_s3_bucket.data_bucket.id
+  provider = aws.account_2
+  
+  bucket = aws_s3_bucket.data_bucket_account_2.id
   key    = "airline-loyalty-program/flight_history/flight_history.json"
-  source = "${path.module}/../../dataset/flight_history.json"
+  source = "${path.module}/../dataset/flight_history.json"
 }
 
-resource "aws_glue_catalog_database" "database" {
-  name = "aws-clean-rooms-lab-${random_string.uid.id}"
+resource "aws_glue_catalog_database" "database_account_2" {
+  provider = aws.account_2
+  
+  name = "aws-clean-rooms-lab"
 
   create_table_default_permission {
     permissions = ["ALL"]
@@ -29,11 +33,13 @@ resource "aws_glue_catalog_database" "database" {
 }
 
 resource "aws_glue_catalog_table" "flight_history_table" {
+  provider = aws.account_2
+  
   name          = "flight_history"
-  database_name = aws_glue_catalog_database.database.name
+  database_name = aws_glue_catalog_database.database_account_2.name
 
   storage_descriptor {
-    location      = "s3://${aws_s3_bucket.data_bucket.id}/airline-loyalty-program/flight_history/"
+    location      = "s3://${aws_s3_bucket.data_bucket_account_2.id}/airline-loyalty-program/flight_history/"
     input_format  = "org.apache.hadoop.mapred.TextInputFormat"
     output_format = "org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat"
 
