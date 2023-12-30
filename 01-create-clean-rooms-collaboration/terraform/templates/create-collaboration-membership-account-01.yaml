@@ -11,3 +11,6 @@ Resources:
     Properties:
       CollaborationIdentifier: !Ref CollaborationId
       QueryLogStatus: DISABLED
+Outputs:
+  MembershipId:
+    Value: !GetAtt CollaborationMembership.MembershipIdentifier
