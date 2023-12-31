@@ -38,30 +38,34 @@ Complete list of terminologies in AWS documentation: [Link](https://docs.aws.ama
 
 The following are some terminologies we will use in this lab.
 
-* Collaboration
+* **Collaboration**
 
    This is the most fundamental resource in AWS Clean Rooms.
 
    To start working on AWS Clean Rooms, one AWS account will create a collaboration and invite other accounts to join. All other resources required for analysis collaboration will be created under the collaboration.
 
-* Membership
+* **Membership**
 
    When the AWS account joins a collaboration, a membership will link the account and the collaboration.
 
    This is important because when a data provider grants data access to its data, it's granted to AWS Clean Rooms on behalf of the membership.
 
-* Configured Table
+* **Configured Table**
 
    Configured table represents an AWS Glue table inside AWS Clean Rooms.
 
    We can set analysis rules on each configured table to restrict data usage over it.
 
-* Analysis Rule
+* **Analysis Rule**
 
    Analysis rule is the restriction, which we can configure, over what and how queries can be performed over a configured table.
 
 ## Sessions
 
-0. [Prepare Glue database](https://github.com/richardfan1126/aws-clean-rooms-lab/tree/main/00-prepare-glue-database)
+0. **[Prepare Glue database](/00-prepare-glue-database)**
 
    This session is to create the AWS Glue databases, which we can use in the lab.
+
+1. **[Simple Collaboration](/01-create-simple-collaboration)**
+
+   In this session, we will create our first AWS Clean Rooms collaboration with a simple configured table.

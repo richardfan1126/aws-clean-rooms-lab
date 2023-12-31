@@ -6,7 +6,7 @@ This session is to create the AWS Glue databases, which we can use in the lab.
 
 This session is not part of the lab. You just need to deploy the Terraform stack and everything will be setup.
 
-1. Make sure you have set up your local environment correctly. [See instruction](https://github.com/richardfan1126/aws-clean-rooms-lab/blob/main/README.md#setup-your-environment)
+1. Make sure you have set up your local environment correctly. [See instruction](/README.md#setup-your-environment)
 
 1. Run the following scripts to deploy resources
 
