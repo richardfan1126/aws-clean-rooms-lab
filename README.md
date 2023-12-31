@@ -64,4 +64,4 @@ The following are some terminologies we will use in this lab.
 
 0. [Prepare Glue database](https://github.com/richardfan1126/aws-clean-rooms-lab/tree/main/00-prepare-glue-database)
 
-   This session is a Terraform stack for creating the AWS Glue databases, which we will use in the lab.
+   This session is to create the AWS Glue databases, which we can use in the lab.
