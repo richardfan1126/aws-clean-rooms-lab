@@ -19,8 +19,8 @@ resource "random_string" "uid" {
 }
 
 resource "aws_cleanrooms_collaboration" "clean_rooms_lab_analysis_collab" {
-  name                     = "clean_rooms_lab_analysis_collab"
-  description              = "clean_rooms_lab_analysis_collab"
+  name                     = "clean_rooms_lab_collab_01"
+  description              = "clean_rooms_lab_collab_01"
   creator_member_abilities = []
   creator_display_name     = "member-data-source"
   query_log_status         = "ENABLED"
