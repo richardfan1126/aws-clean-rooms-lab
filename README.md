@@ -69,3 +69,15 @@ The following are some terminologies we will use in this lab.
 1. **[Simple Collaboration](/01-create-simple-collaboration)**
 
    In this session, we will create our first AWS Clean Rooms collaboration with a simple configured table.
+
+1. **Joining data from different data sources**
+
+   *TBC*
+
+1. **Cryptographic Computing for Clean Rooms (C3R)**
+
+   *TBC*
+
+1. **Differential Privacy**
+
+   *TBC*
