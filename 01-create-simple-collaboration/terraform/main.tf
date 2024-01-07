@@ -12,12 +12,6 @@ data "terraform_remote_state" "prepare_glue_database" {
   }
 }
 
-resource "random_string" "uid" {
-  length  = 4
-  upper   = false
-  special = false
-}
-
 resource "aws_cleanrooms_collaboration" "clean_rooms_lab_analysis_collab" {
   name                     = "clean_rooms_lab_collab_01"
   description              = "clean_rooms_lab_collab_01"
@@ -32,35 +26,95 @@ resource "aws_cleanrooms_collaboration" "clean_rooms_lab_analysis_collab" {
   }
 }
 
-resource "aws_cloudformation_stack" "members_table" {
-  name          = "aws-clean-rooms-lab-members-table-${random_string.uid.id}"
-  template_body = file("${path.module}/templates/create-members-aggregation-table.yaml")
-
-  parameters = {
-    TableName        = "members_aggregation"
-    GlueDatabaseName = split(":", data.terraform_remote_state.prepare_glue_database.outputs.glue_database_account_1.id)[1]
-    GlueTableName    = split(":", data.terraform_remote_state.prepare_glue_database.outputs.members_table.id)[2]
+resource "awscc_cleanrooms_configured_table" "members_table" {
+  name            = "members_aggregation"
+  analysis_method = "DIRECT_QUERY"
+  table_reference = {
+    glue = {
+      database_name = split(":", data.terraform_remote_state.prepare_glue_database.outputs.glue_database_account_1.id)[1]
+      table_name    = split(":", data.terraform_remote_state.prepare_glue_database.outputs.members_table.id)[2]
+    }
   }
+
+  allowed_columns = [
+    "city",
+    "clv",
+    "country",
+    "education",
+    "enrollment month",
+    "enrollment type",
+    "enrollment year",
+    "gender",
+    "loyalty card",
+    "marital status",
+    "salary",
+    "postal code",
+    "province",
+    "loyalty number"
+  ]
+
+  analysis_rules = [
+    {
+      type = "AGGREGATION"
+      policy = {
+        v1 = {
+          aggregation = {
+            aggregate_columns = [
+              {
+                function = "COUNT_DISTINCT"
+                column_names = [
+                  "loyalty number"
+                ]
+              }
+            ]
+            dimension_columns = [
+              "city",
+              "clv",
+              "country",
+              "education",
+              "enrollment month",
+              "enrollment type",
+              "enrollment year",
+              "gender",
+              "loyalty card",
+              "marital status",
+              "salary",
+              "postal code",
+              "province"
+            ]
+            join_columns = []
+            output_constraints = [
+              {
+                column_name = "loyalty number"
+                minimum     = 100
+                type        = "COUNT_DISTINCT"
+              }
+            ]
+            scalar_functions = []
+          }
+        }
+      }
+    }
+  ]
 }
 
-resource "aws_cloudformation_stack" "collab_membership_account_1" {
-  name          = "aws-clean-rooms-lab-collab-membership-${random_string.uid.id}"
-  template_body = file("${path.module}/templates/create-collaboration-membership-account-01.yaml")
-
-  parameters = {
-    CollaborationId = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab.id
-  }
+resource "awscc_cleanrooms_membership" "collab_membership_account_1" {
+  collaboration_identifier = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab.id
+  query_log_status         = "ENABLED"
 }
 
-resource "aws_cloudformation_stack" "collab_membership_account_2" {
-  provider = aws.account_2
+resource "awscc_cleanrooms_membership" "collab_membership_account_2" {
+  provider = awscc.account_2
 
-  name          = "aws-clean-rooms-lab-collab-membership-${random_string.uid.id}"
-  template_body = file("${path.module}/templates/create-collaboration-membership-account-02.yaml")
-
-  parameters = {
-    CollaborationId  = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab.id
-    ResultBucketName = data.terraform_remote_state.prepare_glue_database.outputs.query_result_bucket_account_2.id
+  collaboration_identifier = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab.id
+  query_log_status         = "ENABLED"
+  default_result_configuration = {
+    output_configuration = {
+      s3 = {
+        bucket        = data.terraform_remote_state.prepare_glue_database.outputs.query_result_bucket_account_2.id
+        result_format = "CSV"
+      }
+    }
   }
 }
 
@@ -78,7 +132,7 @@ resource "aws_iam_role" "members_table_association_role" {
         }
         Condition = {
           StringLike = {
-            "sts:ExternalId" = "arn:aws:*:*:*:dbuser:*/${aws_cloudformation_stack.collab_membership_account_2.outputs.MembershipId}*"
+            "sts:ExternalId" = "arn:aws:*:*:*:dbuser:*/${awscc_cleanrooms_membership.collab_membership_account_2.id}*"
           }
         }
       },
@@ -91,8 +145,8 @@ resource "aws_iam_role" "members_table_association_role" {
         Condition = {
           "ForAnyValue:ArnEquals" = {
             "aws:SourceArn" = [
-              "arn:aws:cleanrooms:*:${data.aws_caller_identity.account_1.account_id}:membership/${aws_cloudformation_stack.collab_membership_account_1.outputs.MembershipId}",
-              "arn:aws:cleanrooms:*:${data.aws_caller_identity.account_2.account_id}:membership/${aws_cloudformation_stack.collab_membership_account_2.outputs.MembershipId}"
+              "arn:aws:cleanrooms:*:${data.aws_caller_identity.account_1.account_id}:membership/${awscc_cleanrooms_membership.collab_membership_account_1.id}",
+              "arn:aws:cleanrooms:*:${data.aws_caller_identity.account_2.account_id}:membership/${awscc_cleanrooms_membership.collab_membership_account_2.id}"
             ]
           }
         }
@@ -161,13 +215,9 @@ resource "aws_iam_role" "members_table_association_role" {
   }
 }
 
-resource "aws_cloudformation_stack" "members_table_association" {
-  name          = "aws-clean-rooms-lab-members-table-association-${random_string.uid.id}"
-  template_body = file("${path.module}/templates/create-table-association-account-01.yaml")
-
-  parameters = {
-    ConfiguredTableId = aws_cloudformation_stack.members_table.outputs.ConfiguredTableId
-    MembershipId      = aws_cloudformation_stack.collab_membership_account_1.outputs.MembershipId
-    RoleArn           = aws_iam_role.members_table_association_role.arn
-  }
+resource "awscc_cleanrooms_configured_table_association" "members_table_association" {
+  name                        = "members"
+  configured_table_identifier = awscc_cleanrooms_configured_table.members_table.configured_table_identifier
+  membership_identifier       = awscc_cleanrooms_membership.collab_membership_account_1.id
+  role_arn                    = aws_iam_role.members_table_association_role.arn
 }
