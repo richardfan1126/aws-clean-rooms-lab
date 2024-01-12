@@ -1,14 +1,14 @@
 resource "aws_s3_bucket" "query_result_bucket_account_2" {
   provider = aws.account_2
 
-  bucket = "${data.aws_caller_identity.account_2.account_id}-aws-clean-rooms-lab-result-${random_string.uid.id}"
+  bucket        = "${data.aws_caller_identity.account_2.account_id}-aws-clean-rooms-lab-result-${random_string.uid.id}"
   force_destroy = true
 }
 
 resource "aws_s3_bucket" "data_bucket_account_2" {
   provider = aws.account_2
 
-  bucket = "${data.aws_caller_identity.account_2.account_id}-aws-clean-rooms-lab-data-${random_string.uid.id}"
+  bucket        = "${data.aws_caller_identity.account_2.account_id}-aws-clean-rooms-lab-data-${random_string.uid.id}"
   force_destroy = true
 }
 

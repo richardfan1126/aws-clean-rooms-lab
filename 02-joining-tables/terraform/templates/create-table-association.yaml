@@ -1,0 +1,19 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  TableAssociationName:
+    Type: String
+  ConfiguredTableId:
+    Type: String
+  MembershipId:
+    Type: String
+  RoleArn:
+    Type: String
+Resources:
+  MembersTableAssociation:
+    Type: AWS::CleanRooms::ConfiguredTableAssociation
+    Properties:
+      Name: !Ref TableAssociationName
+      ConfiguredTableIdentifier: !Ref ConfiguredTableId
+      MembershipIdentifier: !Ref MembershipId
+      RoleArn: !Ref RoleArn

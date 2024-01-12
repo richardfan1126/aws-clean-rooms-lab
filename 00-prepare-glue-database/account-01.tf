@@ -1,10 +1,10 @@
 resource "aws_s3_bucket" "query_result_bucket_account_1" {
-  bucket = "${data.aws_caller_identity.account_1.account_id}-aws-clean-rooms-lab-result-${random_string.uid.id}"
+  bucket        = "${data.aws_caller_identity.account_1.account_id}-aws-clean-rooms-lab-result-${random_string.uid.id}"
   force_destroy = true
 }
 
 resource "aws_s3_bucket" "data_bucket_account_1" {
-  bucket = "${data.aws_caller_identity.account_1.account_id}-aws-clean-rooms-lab-data-${random_string.uid.id}"
+  bucket        = "${data.aws_caller_identity.account_1.account_id}-aws-clean-rooms-lab-data-${random_string.uid.id}"
   force_destroy = true
 }
 
