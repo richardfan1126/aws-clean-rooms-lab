@@ -1,5 +1,6 @@
 locals {
-  import_prev_state       = fileexists("${path.module}/../../01-create-simple-collaboration/terraform/terraform.tfstate")
+  prev_state_exist        = fileexists("${path.module}/../../01-create-simple-collaboration/terraform/terraform.tfstate")
+  import_prev_state       = local.prev_state_exist && length(data.terraform_remote_state.create_simple_collaboration[0].outputs) > 0
   account_1_membership_id = local.import_prev_state ? data.terraform_remote_state.create_simple_collaboration[0].outputs.account_1_membership_id : var.account_1_membership_id
   account_2_membership_id = local.import_prev_state ? data.terraform_remote_state.create_simple_collaboration[0].outputs.account_2_membership_id : var.account_2_membership_id
 }
@@ -19,7 +20,7 @@ data "terraform_remote_state" "prepare_glue_database" {
 }
 
 data "terraform_remote_state" "create_simple_collaboration" {
-  count = local.import_prev_state ? 1 : 0
+  count = local.prev_state_exist ? 1 : 0
 
   backend = "local"
 
