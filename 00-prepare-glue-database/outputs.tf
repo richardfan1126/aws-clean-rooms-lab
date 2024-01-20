@@ -2,6 +2,10 @@ output "data_bucket_account_1" {
   value = aws_s3_bucket.data_bucket_account_1
 }
 
+output "query_result_bucket_account_1" {
+  value = aws_s3_bucket.query_result_bucket_account_1
+}
+
 output "data_bucket_account_2" {
   value = aws_s3_bucket.data_bucket_account_2
 }

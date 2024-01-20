@@ -3,8 +3,6 @@ AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
   CollaborationId:
     Type: String
-  ResultBucketName:
-    Type: String
 Resources:
   CollaborationMembership:
     Type: AWS::CleanRooms::Membership
@@ -13,11 +11,6 @@ Resources:
     Properties:
       CollaborationIdentifier: !Ref CollaborationId
       QueryLogStatus: ENABLED
-      DefaultResultConfiguration:
-        OutputConfiguration:
-          S3:
-            Bucket: !Ref ResultBucketName
-            ResultFormat: CSV
 Outputs:
   MembershipId:
     Value: !GetAtt CollaborationMembership.MembershipIdentifier

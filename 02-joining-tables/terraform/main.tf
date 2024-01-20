@@ -21,14 +21,14 @@ resource "random_string" "uid" {
 resource "aws_cleanrooms_collaboration" "clean_rooms_lab_analysis_collab" {
   name                     = "clean_rooms_lab_collab_02"
   description              = "clean_rooms_lab_collab_02"
-  creator_member_abilities = []
+  creator_member_abilities = ["CAN_QUERY", "CAN_RECEIVE_RESULTS"]
   creator_display_name     = "member-data-source"
   query_log_status         = "ENABLED"
 
   member {
     account_id       = data.aws_caller_identity.account_2.account_id
     display_name     = "flight-data-store"
-    member_abilities = ["CAN_QUERY", "CAN_RECEIVE_RESULTS"]
+    member_abilities = []
   }
 }
 
@@ -38,6 +38,7 @@ resource "aws_cloudformation_stack" "collab_membership_account_1" {
 
   parameters = {
     CollaborationId = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab.id
+    ResultBucketName = data.terraform_remote_state.prepare_glue_database.outputs.query_result_bucket_account_1.id
   }
 }
 
@@ -49,7 +50,6 @@ resource "aws_cloudformation_stack" "collab_membership_account_2" {
 
   parameters = {
     CollaborationId  = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab.id
-    ResultBucketName = data.terraform_remote_state.prepare_glue_database.outputs.query_result_bucket_account_2.id
   }
 }
 
@@ -78,7 +78,7 @@ resource "aws_iam_role" "members_table_association_role" {
         }
         Condition = {
           StringLike = {
-            "sts:ExternalId" = "arn:aws:*:*:*:dbuser:*/${aws_cloudformation_stack.collab_membership_account_2.outputs.MembershipId}*"
+            "sts:ExternalId" = "arn:aws:*:*:*:dbuser:*/${aws_cloudformation_stack.collab_membership_account_1.outputs.MembershipId}*"
           }
         }
       },
@@ -202,7 +202,7 @@ resource "aws_iam_role" "flight_history_table_association_role" {
         }
         Condition = {
           StringLike = {
-            "sts:ExternalId" = "arn:aws:*:*:*:dbuser:*/${aws_cloudformation_stack.collab_membership_account_2.outputs.MembershipId}*"
+            "sts:ExternalId" = "arn:aws:*:*:*:dbuser:*/${aws_cloudformation_stack.collab_membership_account_1.outputs.MembershipId}*"
           }
         }
       },
