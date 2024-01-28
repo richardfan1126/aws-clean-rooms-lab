@@ -1,26 +1,6 @@
-data "aws_caller_identity" "account_1" {}
-
-data "aws_caller_identity" "account_2" {
-  provider = aws.account_2
-}
-
-data "terraform_remote_state" "prepare_glue_database" {
-  backend = "local"
-
-  config = {
-    path = "${path.module}/../../00-prepare-glue-database/terraform.tfstate"
-  }
-}
-
-resource "random_string" "uid" {
-  length  = 4
-  upper   = false
-  special = false
-}
-
-resource "aws_cleanrooms_collaboration" "clean_rooms_lab_analysis_collab" {
-  name                     = "clean_rooms_lab_collab_02"
-  description              = "clean_rooms_lab_collab_02"
+resource "aws_cleanrooms_collaboration" "clean_rooms_lab_analysis_collab_aggregate" {
+  name                     = "clean_rooms_lab_collab_02-aggregate"
+  description              = "clean_rooms_lab_collab_02-aggregate"
   creator_member_abilities = ["CAN_QUERY", "CAN_RECEIVE_RESULTS"]
   creator_display_name     = "member-data-source"
   query_log_status         = "ENABLED"
@@ -32,40 +12,40 @@ resource "aws_cleanrooms_collaboration" "clean_rooms_lab_analysis_collab" {
   }
 }
 
-resource "aws_cloudformation_stack" "collab_membership_account_1" {
-  name          = "aws-clean-rooms-lab-collab-membership-${random_string.uid.id}"
-  template_body = file("${path.module}/templates/create-collaboration-membership-account-01.yaml")
+resource "aws_cloudformation_stack" "collab_membership_account_1_aggregate" {
+  name          = "aws-clean-rooms-lab-collab-membership-aggregate-${random_string.uid.id}"
+  template_body = file("${path.module}/templates/create-collaboration-membership-with-query.yaml")
 
   parameters = {
-    CollaborationId = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab.id
+    CollaborationId = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab_aggregate.id
     ResultBucketName = data.terraform_remote_state.prepare_glue_database.outputs.query_result_bucket_account_1.id
   }
 }
 
-resource "aws_cloudformation_stack" "collab_membership_account_2" {
+resource "aws_cloudformation_stack" "collab_membership_account_2_aggregate" {
   provider = aws.account_2
 
-  name          = "aws-clean-rooms-lab-collab-membership-${random_string.uid.id}"
-  template_body = file("${path.module}/templates/create-collaboration-membership-account-02.yaml")
+  name          = "aws-clean-rooms-lab-collab-membership-aggregate-${random_string.uid.id}"
+  template_body = file("${path.module}/templates/create-collaboration-membership.yaml")
 
   parameters = {
-    CollaborationId  = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab.id
+    CollaborationId  = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab_aggregate.id
   }
 }
 
-resource "aws_cloudformation_stack" "members_table" {
-  name          = "aws-clean-rooms-lab-members-table-${random_string.uid.id}"
-  template_body = file("${path.module}/templates/create-members-table.yaml")
+resource "aws_cloudformation_stack" "members_table_aggregate" {
+  name          = "aws-clean-rooms-lab-members-table-aggregate-${random_string.uid.id}"
+  template_body = file("${path.module}/templates/aggregate/create-members-table.yaml")
 
   parameters = {
-    TableName        = "members"
+    TableName        = "members_aggregate"
     GlueDatabaseName = split(":", data.terraform_remote_state.prepare_glue_database.outputs.glue_database_account_1.id)[1]
     GlueTableName    = split(":", data.terraform_remote_state.prepare_glue_database.outputs.members_table.id)[2]
   }
 }
 
-resource "aws_iam_role" "members_table_association_role" {
-  name = "aws-clean-rooms-lab-members-table-association-role"
+resource "aws_iam_role" "members_table_association_role_aggregate" {
+  name = "aws-clean-rooms-lab-members-table-association-role-aggregate"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -78,7 +58,7 @@ resource "aws_iam_role" "members_table_association_role" {
         }
         Condition = {
           StringLike = {
-            "sts:ExternalId" = "arn:aws:*:*:*:dbuser:*/${aws_cloudformation_stack.collab_membership_account_1.outputs.MembershipId}*"
+            "sts:ExternalId" = "arn:aws:*:*:*:dbuser:*/${aws_cloudformation_stack.collab_membership_account_1_aggregate.outputs.MembershipId}*"
           }
         }
       },
@@ -91,8 +71,8 @@ resource "aws_iam_role" "members_table_association_role" {
         Condition = {
           "ForAnyValue:ArnEquals" = {
             "aws:SourceArn" = [
-              "arn:aws:cleanrooms:*:${data.aws_caller_identity.account_1.account_id}:membership/${aws_cloudformation_stack.collab_membership_account_1.outputs.MembershipId}",
-              "arn:aws:cleanrooms:*:${data.aws_caller_identity.account_2.account_id}:membership/${aws_cloudformation_stack.collab_membership_account_2.outputs.MembershipId}"
+              "arn:aws:cleanrooms:*:${data.aws_caller_identity.account_1.account_id}:membership/${aws_cloudformation_stack.collab_membership_account_1_aggregate.outputs.MembershipId}",
+              "arn:aws:cleanrooms:*:${data.aws_caller_identity.account_2.account_id}:membership/${aws_cloudformation_stack.collab_membership_account_2_aggregate.outputs.MembershipId}"
             ]
           }
         }
@@ -161,35 +141,35 @@ resource "aws_iam_role" "members_table_association_role" {
   }
 }
 
-resource "aws_cloudformation_stack" "members_table_association" {
-  name          = "aws-clean-rooms-lab-members-table-association-${random_string.uid.id}"
+resource "aws_cloudformation_stack" "members_table_association_aggregate" {
+  name          = "aws-clean-rooms-lab-members-table-association-aggregate-${random_string.uid.id}"
   template_body = file("${path.module}/templates/create-table-association.yaml")
 
   parameters = {
     TableAssociationName = "members"
-    ConfiguredTableId    = aws_cloudformation_stack.members_table.outputs.ConfiguredTableId
-    MembershipId         = aws_cloudformation_stack.collab_membership_account_1.outputs.MembershipId
-    RoleArn              = aws_iam_role.members_table_association_role.arn
+    ConfiguredTableId    = aws_cloudformation_stack.members_table_aggregate.outputs.ConfiguredTableId
+    MembershipId         = aws_cloudformation_stack.collab_membership_account_1_aggregate.outputs.MembershipId
+    RoleArn              = aws_iam_role.members_table_association_role_aggregate.arn
   }
 }
 
-resource "aws_cloudformation_stack" "flight_history_table" {
+resource "aws_cloudformation_stack" "flight_history_table_aggregate" {
   provider = aws.account_2
 
-  name          = "aws-clean-rooms-lab-flight-history-table-${random_string.uid.id}"
-  template_body = file("${path.module}/templates/create-flight-history-table.yaml")
+  name          = "aws-clean-rooms-lab-flight-history-table-aggregate-${random_string.uid.id}"
+  template_body = file("${path.module}/templates/aggregate/create-flight-history-table.yaml")
 
   parameters = {
-    TableName        = "flight_history"
+    TableName        = "flight_history_aggregate"
     GlueDatabaseName = split(":", data.terraform_remote_state.prepare_glue_database.outputs.glue_database_account_2.id)[1]
     GlueTableName    = split(":", data.terraform_remote_state.prepare_glue_database.outputs.flight_history_table.id)[2]
   }
 }
 
-resource "aws_iam_role" "flight_history_table_association_role" {
+resource "aws_iam_role" "flight_history_table_association_role_aggregate" {
   provider = aws.account_2
 
-  name = "aws-clean-rooms-lab-flight-history-table-association-role"
+  name = "aws-clean-rooms-lab-flight-history-table-association-role-aggreg"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -202,7 +182,7 @@ resource "aws_iam_role" "flight_history_table_association_role" {
         }
         Condition = {
           StringLike = {
-            "sts:ExternalId" = "arn:aws:*:*:*:dbuser:*/${aws_cloudformation_stack.collab_membership_account_1.outputs.MembershipId}*"
+            "sts:ExternalId" = "arn:aws:*:*:*:dbuser:*/${aws_cloudformation_stack.collab_membership_account_1_aggregate.outputs.MembershipId}*"
           }
         }
       },
@@ -215,8 +195,8 @@ resource "aws_iam_role" "flight_history_table_association_role" {
         Condition = {
           "ForAnyValue:ArnEquals" = {
             "aws:SourceArn" = [
-              "arn:aws:cleanrooms:*:${data.aws_caller_identity.account_1.account_id}:membership/${aws_cloudformation_stack.collab_membership_account_1.outputs.MembershipId}",
-              "arn:aws:cleanrooms:*:${data.aws_caller_identity.account_2.account_id}:membership/${aws_cloudformation_stack.collab_membership_account_2.outputs.MembershipId}"
+              "arn:aws:cleanrooms:*:${data.aws_caller_identity.account_1.account_id}:membership/${aws_cloudformation_stack.collab_membership_account_1_aggregate.outputs.MembershipId}",
+              "arn:aws:cleanrooms:*:${data.aws_caller_identity.account_2.account_id}:membership/${aws_cloudformation_stack.collab_membership_account_2_aggregate.outputs.MembershipId}"
             ]
           }
         }
@@ -285,16 +265,16 @@ resource "aws_iam_role" "flight_history_table_association_role" {
   }
 }
 
-resource "aws_cloudformation_stack" "flight_history_table_association" {
+resource "aws_cloudformation_stack" "flight_history_table_association_aggregate" {
   provider = aws.account_2
 
-  name          = "aws-clean-rooms-lab-flight-history-table-association-${random_string.uid.id}"
+  name          = "aws-clean-rooms-lab-flight-history-table-association-aggregate-${random_string.uid.id}"
   template_body = file("${path.module}/templates/create-table-association.yaml")
 
   parameters = {
     TableAssociationName = "flight_history"
-    ConfiguredTableId    = aws_cloudformation_stack.flight_history_table.outputs.ConfiguredTableId
-    MembershipId         = aws_cloudformation_stack.collab_membership_account_2.outputs.MembershipId
-    RoleArn              = aws_iam_role.flight_history_table_association_role.arn
+    ConfiguredTableId    = aws_cloudformation_stack.flight_history_table_aggregate.outputs.ConfiguredTableId
+    MembershipId         = aws_cloudformation_stack.collab_membership_account_2_aggregate.outputs.MembershipId
+    RoleArn              = aws_iam_role.flight_history_table_association_role_aggregate.arn
   }
 }
