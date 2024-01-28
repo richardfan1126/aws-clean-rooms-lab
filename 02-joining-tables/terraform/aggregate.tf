@@ -141,7 +141,17 @@ resource "aws_iam_role" "members_table_association_role_aggregate" {
   }
 }
 
+# Sometime, the Clean Rooms collaboration cannot assume the IAM role if it's created too soon
+# Adding this wait between creation of IAM role and table association
+resource "time_sleep" "wait_before_members_table_association_aggregate" {
+  depends_on = [aws_iam_role.members_table_association_role_aggregate]
+
+  create_duration = "30s"
+}
+
 resource "aws_cloudformation_stack" "members_table_association_aggregate" {
+  depends_on = [time_sleep.wait_before_members_table_association_aggregate]
+
   name          = "aws-clean-rooms-lab-members-table-association-aggregate-${random_string.uid.id}"
   template_body = file("${path.module}/templates/create-table-association.yaml")
 
@@ -265,7 +275,16 @@ resource "aws_iam_role" "flight_history_table_association_role_aggregate" {
   }
 }
 
+# Sometime, the Clean Rooms collaboration cannot assume the IAM role if it's created too soon
+# Adding this wait between creation of IAM role and table association
+resource "time_sleep" "wait_before_flight_history_table_association_aggregate" {
+  depends_on = [aws_iam_role.flight_history_table_association_role_aggregate]
+
+  create_duration = "30s"
+}
+
 resource "aws_cloudformation_stack" "flight_history_table_association_aggregate" {
+  depends_on = [time_sleep.wait_before_flight_history_table_association_aggregate]
   provider = aws.account_2
 
   name          = "aws-clean-rooms-lab-flight-history-table-association-aggregate-${random_string.uid.id}"
