@@ -38,6 +38,13 @@ Resources:
                     ColumnNames:
                     - points accumulated
                     - points redeemed
+                  - Function: SUM
+                    ColumnNames:
+                    - points accumulated
+                    - points redeemed
+                  - Function: COUNT_DISTINCT
+                    ColumnNames:
+                    - loyalty number
                 DimensionColumns:
                   - distance
                   - dollar cost points redeemed
