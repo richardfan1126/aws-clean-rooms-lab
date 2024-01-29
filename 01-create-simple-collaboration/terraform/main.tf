@@ -161,7 +161,17 @@ resource "aws_iam_role" "members_table_association_role" {
   }
 }
 
+# Sometime, the Clean Rooms collaboration cannot assume the IAM role if it's created too soon
+# Adding this wait between creation of IAM role and table association
+resource "time_sleep" "wait_before_members_table_association" {
+  depends_on = [aws_iam_role.members_table_association_role]
+
+  create_duration = "30s"
+}
+
 resource "aws_cloudformation_stack" "members_table_association" {
+  depends_on = [time_sleep.wait_before_members_table_association]
+
   name          = "aws-clean-rooms-lab-members-table-association-${random_string.uid.id}"
   template_body = file("${path.module}/templates/create-table-association-account-01.yaml")
 
