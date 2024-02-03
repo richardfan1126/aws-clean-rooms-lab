@@ -130,7 +130,7 @@
 
          1. Pick `clean_rooms_lab_collab_02-aggregate` then click **Choose collaboration**.
 
-         ![](/images/02-joining-tables/aggregate/17.png)
+            ![](/images/02-joining-tables/aggregate/17.png)
 
          1. Input the following details:
 
@@ -140,9 +140,9 @@
 
             * **Service role name**: *(This should be prefilled. If not, give it a random name)*
 
-         ![](/images/02-joining-tables/aggregate/18.png)
-         
-         ![](/images/02-joining-tables/aggregate/19.png)
+            ![](/images/02-joining-tables/aggregate/18.png)
+            
+            ![](/images/02-joining-tables/aggregate/19.png)
 
          1. Click **Associate table**.
 
