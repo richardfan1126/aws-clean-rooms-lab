@@ -12,6 +12,8 @@ If you want to skip it, please follow [automatic deployment](#automatic-deployme
 
 ### Manual Deployment
 
+1. Complete [**0. Prepare Glue database**](/00-prepare-glue-database) deployment.
+
 1. Login to the AWS Clean Rooms console using the `aws-clean-rooms-lab-account-1` credential.
 
    1. Click on **Create collaboration**
@@ -169,6 +171,8 @@ If you want to skip it, please follow [automatic deployment](#automatic-deployme
 ### Automatic Deployment
 
 1. Make sure you have set up your local environment correctly. [See instruction](/README.md#setup-your-environment)
+
+1. Complete [**0. Prepare Glue database**](/00-prepare-glue-database) deployment
 
 1. Run the following scripts to deploy resources
 
