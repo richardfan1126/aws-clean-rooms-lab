@@ -285,7 +285,7 @@ resource "time_sleep" "wait_before_flight_history_table_association_list" {
 
 resource "aws_cloudformation_stack" "flight_history_table_association_list" {
   depends_on = [time_sleep.wait_before_flight_history_table_association_list]
-  provider = aws.account_2
+  provider   = aws.account_2
 
   name          = "aws-clean-rooms-lab-flight-history-table-association-list-${random_string.uid.id}"
   template_body = file("${path.module}/templates/create-table-association.yaml")

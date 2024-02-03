@@ -17,7 +17,7 @@ resource "aws_cloudformation_stack" "collab_membership_account_1_aggregate" {
   template_body = file("${path.module}/templates/create-collaboration-membership-with-query.yaml")
 
   parameters = {
-    CollaborationId = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab_aggregate.id
+    CollaborationId  = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab_aggregate.id
     ResultBucketName = data.terraform_remote_state.prepare_glue_database.outputs.query_result_bucket_account_1.id
   }
 }
@@ -29,7 +29,7 @@ resource "aws_cloudformation_stack" "collab_membership_account_2_aggregate" {
   template_body = file("${path.module}/templates/create-collaboration-membership.yaml")
 
   parameters = {
-    CollaborationId  = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab_aggregate.id
+    CollaborationId = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab_aggregate.id
   }
 }
 
@@ -285,7 +285,7 @@ resource "time_sleep" "wait_before_flight_history_table_association_aggregate" {
 
 resource "aws_cloudformation_stack" "flight_history_table_association_aggregate" {
   depends_on = [time_sleep.wait_before_flight_history_table_association_aggregate]
-  provider = aws.account_2
+  provider   = aws.account_2
 
   name          = "aws-clean-rooms-lab-flight-history-table-association-aggregate-${random_string.uid.id}"
   template_body = file("${path.module}/templates/create-table-association.yaml")
