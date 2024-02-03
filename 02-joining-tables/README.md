@@ -2,7 +2,7 @@
 
 In this session, we will use AWS Clean Rooms to join multiple tables from different accounts.
 
-We will be creating 2 collaborations, using [**Aggregation**](https://docs.aws.amazon.com/clean-rooms/latest/userguide/analysis-rules-aggregation.html) and [**List**](https://docs.aws.amazon.com/clean-rooms/latest/userguide/analysis-rules-list.html) Aggregation analysis rule respectively.
+We will be creating 2 collaborations, using [**Aggregation**](https://docs.aws.amazon.com/clean-rooms/latest/userguide/analysis-rules-aggregation.html) and [**List**](https://docs.aws.amazon.com/clean-rooms/latest/userguide/analysis-rules-list.html) analysis rule respectively.
 
 ## Scenario
 
@@ -18,12 +18,14 @@ By using AWS Clean Rooms, these two companies can safely share their data withou
 
 ## Setup
 
-You may use the [Automatic method](#automatic-deployment) to quickly deploy all resources.
+You may use the automatic method to quickly deploy all resources.
 
-But I recommend going through the [Manual method](#manual-deployment) to understand the difference between the 2 analysis rules.
+But I recommend going through the manual method to understand the difference between the 2 analysis rules.
 
-### Manual Deployment
+## Sub session
 
-### Automatic Deployment
+This session consists of 2 sub sessions:
 
-## Exercise
+* [**Aggregation analysis rule**](docs/aggregate.md)
+
+* [**List analysis rule**](docs/list.md)
