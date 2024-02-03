@@ -22,6 +22,24 @@ You may use the automatic method to quickly deploy all resources.
 
 But I recommend going through the manual method to understand the difference between the 2 analysis rules.
 
+### Manual Deployment
+
+See steps in [sub sessions](#sub-session)
+
+### Automatic Deployment
+
+1. Make sure you have set up your local environment correctly. [See instruction](/README.md#setup-your-environment)
+
+1. Complete [**0. Prepare Glue database**](/00-prepare-glue-database) deployment
+
+1. Run the following scripts to deploy resources
+
+   ```bash
+   cd 02-joining-tables/terraform/
+   terraform init
+   terraform apply -auto-approve
+   ```
+
 ## Sub session
 
 This session consists of 2 sub sessions:
