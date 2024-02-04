@@ -14,11 +14,13 @@ resource "aws_cleanrooms_collaboration" "clean_rooms_lab_analysis_collab_aggrega
 
 resource "aws_cloudformation_stack" "collab_membership_account_1_aggregate" {
   name          = "aws-clean-rooms-lab-collab-membership-aggregate-${random_string.uid.id}"
-  template_body = file("${path.module}/templates/create-collaboration-membership-with-query.yaml")
+  template_body = file("${path.module}/templates/create-collaboration-membership.yaml")
 
   parameters = {
-    CollaborationId  = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab_aggregate.id
-    ResultBucketName = data.terraform_remote_state.prepare_glue_database.outputs.query_result_bucket_account_1.id
+    CollaborationId    = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab_aggregate.id
+    CreateResultConfig = "True"
+    ResultBucketName   = data.terraform_remote_state.prepare_glue_database.outputs.query_result_bucket_account_1.id
+    RetainPolicy       = "Retain"
   }
 }
 
@@ -30,6 +32,7 @@ resource "aws_cloudformation_stack" "collab_membership_account_2_aggregate" {
 
   parameters = {
     CollaborationId = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab_aggregate.id
+    RetainPolicy    = "Delete"
   }
 }
 
