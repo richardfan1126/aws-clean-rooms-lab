@@ -265,3 +265,58 @@
          1. Click **Associate table**.
 
 ## Exercise
+
+1. Login to the AWS Clean Rooms console using the `aws-clean-rooms-lab-account-1` credential.
+
+   1. Goto **clean_rooms_lab_collab_02-aggregate** -> **Queries** and and scroll down to the query editor.
+
+      You will see 2 tables, one from the same AWS account and the other from the `flight-data-store` account.
+
+      ![](/images/02-joining-tables/aggregate/32.png)
+
+   1. We want to know how many customers have flight booked in each month. Try running the following SQL:
+
+      ```sql
+      SELECT COUNT(DISTINCT "flight_history"."loyalty number"),
+         "flight_history"."year",
+         "flight_history"."month"
+      FROM "flight_history"
+      WHERE "flight_history"."flights booked" > 0
+      GROUP BY "flight_history"."year",
+         "flight_history"."month"
+      ORDER BY "flight_history"."year",
+         "flight_history"."month"
+      ```
+
+      It will return an error `Inner join to query runner table required for table flight_history`
+
+      ![](/images/02-joining-tables/aggregate/33.png)
+
+      ![](/images/02-joining-tables/aggregate/34.png)
+
+      This is because we have set the analysis rule to require only overlapped records to be queried.
+
+      In this case, only queries with an `INNER JOIN` on a query runner's table are allowed.
+
+   1. Now, let's run a modified query with an `INNER JOIN` between `flight_history` and `members` _(which is owned by this account)_a
+
+      ```sql
+      SELECT COUNT(DISTINCT "flight_history"."loyalty number"),
+         "flight_history"."year",
+         "flight_history"."month"
+      FROM "flight_history"
+         INNER JOIN "members" ON "flight_history"."loyalty number" = "members"."loyalty number"
+      WHERE "flight_history"."flights booked" > 0
+      GROUP BY "flight_history"."year",
+         "flight_history"."month"
+      ORDER BY "flight_history"."year",
+         "flight_history"."month"
+      ```
+
+      This time, we will get the result.
+
+      ![](/images/02-joining-tables/aggregate/35.png)
+
+      ![](/images/02-joining-tables/aggregate/36.png)
+
+   **Question**: What is the difference between these 2 queries?

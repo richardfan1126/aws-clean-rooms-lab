@@ -10,7 +10,7 @@ In most airlines, the loyalty program and the flights are operated by the same c
 
 But for the sake of this lab, let's imagine there is a loyalty program company (_Account 1_) and an airline company (_Account 2_).
 
-For the loyalty program company, they want to know: Among all their member, who travel the most, so they can offer related products to them.
+For the loyalty program company, they want to know how their members use and earn their points from flights.
 
 For the airline company, they want to know the demographic of their flyers (e.g., where they come from and how much they earn) so they can prepare more targeted promotions in the future.
 
