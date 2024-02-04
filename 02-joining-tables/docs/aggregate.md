@@ -268,55 +268,98 @@
 
 1. Login to the AWS Clean Rooms console using the `aws-clean-rooms-lab-account-1` credential.
 
-   1. Goto **clean_rooms_lab_collab_02-aggregate** -> **Queries** and and scroll down to the query editor.
+1. Goto **clean_rooms_lab_collab_02-aggregate** -> **Queries** and and scroll down to the query editor.
 
-      You will see 2 tables, one from the same AWS account and the other from the `flight-data-store` account.
+   You will see 2 tables, one from the same AWS account and the other from the `flight-data-store` account.
 
-      ![](/images/02-joining-tables/aggregate/32.png)
+   ![](/images/02-joining-tables/aggregate/32.png)
 
-   1. We want to know how many customers have flight booked in each month. Try running the following SQL:
+1. We want to know how many customers have flights booked each month. Try running the following SQL:
 
-      ```sql
-      SELECT COUNT(DISTINCT "flight_history"."loyalty number"),
-         "flight_history"."year",
-         "flight_history"."month"
-      FROM "flight_history"
-      WHERE "flight_history"."flights booked" > 0
-      GROUP BY "flight_history"."year",
-         "flight_history"."month"
-      ORDER BY "flight_history"."year",
-         "flight_history"."month"
-      ```
+   ```sql
+   SELECT COUNT(DISTINCT "flight_history"."loyalty number"),
+      "flight_history"."year",
+      "flight_history"."month"
+   FROM "flight_history"
+   WHERE "flight_history"."flights booked" > 0
+   GROUP BY "flight_history"."year",
+      "flight_history"."month"
+   ORDER BY "flight_history"."year",
+      "flight_history"."month"
+   ```
 
-      It will return an error `Inner join to query runner table required for table flight_history`
+   It will return an error `Inner join to query runner table required for table flight_history`
 
-      ![](/images/02-joining-tables/aggregate/33.png)
+   ![](/images/02-joining-tables/aggregate/33.png)
 
-      ![](/images/02-joining-tables/aggregate/34.png)
+   ![](/images/02-joining-tables/aggregate/34.png)
 
-      This is because we have set the analysis rule to require only overlapped records to be queried.
+   This is because we have set the analysis rule to require only overlapped records to be queried.
 
-      In this case, only queries with an `INNER JOIN` on a query runner's table are allowed.
+   In this case, only queries with an `INNER JOIN` on a query runner's table are allowed.
 
-   1. Now, let's run a modified query with an `INNER JOIN` between `flight_history` and `members` _(which is owned by this account)_a
+1. Now, let's run a modified query with an `INNER JOIN` between `flight_history` and `members` _(which is owned by this account)_a
 
-      ```sql
-      SELECT COUNT(DISTINCT "flight_history"."loyalty number"),
-         "flight_history"."year",
-         "flight_history"."month"
-      FROM "flight_history"
-         INNER JOIN "members" ON "flight_history"."loyalty number" = "members"."loyalty number"
-      WHERE "flight_history"."flights booked" > 0
-      GROUP BY "flight_history"."year",
-         "flight_history"."month"
-      ORDER BY "flight_history"."year",
-         "flight_history"."month"
-      ```
+   ```sql
+   SELECT COUNT(DISTINCT "flight_history"."loyalty number"),
+      "flight_history"."year",
+      "flight_history"."month"
+   FROM "flight_history"
+      INNER JOIN "members" ON "flight_history"."loyalty number" = "members"."loyalty number"
+   WHERE "flight_history"."flights booked" > 0
+   GROUP BY "flight_history"."year",
+      "flight_history"."month"
+   ORDER BY "flight_history"."year",
+      "flight_history"."month"
+   ```
 
-      This time, we will get the result.
+   This time, we will get the result.
 
-      ![](/images/02-joining-tables/aggregate/35.png)
+   ![](/images/02-joining-tables/aggregate/35.png)
 
-      ![](/images/02-joining-tables/aggregate/36.png)
+   ![](/images/02-joining-tables/aggregate/36.png)
 
-   **Question**: What is the difference between these 2 queries?
+### Questions
+
+* What is the difference between these 2 queries?
+
+   <details>
+
+   <summary>Answer</summary>
+
+   The 1st query does not have `INNER JOIN`, so it includes all records from table `flight_history` where `flights booked` is greater than 0.
+
+   The 2nd query has an `INNER JOIN` statement between `flight_history` and `members` tables, so it only includes records with `loyalty number` that exist in both tables.
+
+   If we login to `aws-clean-rooms-lab-account-2` and run the 1st query on Amazon Athena, we will get a result with a larger member count.
+
+   ![](/images/02-joining-tables/aggregate/37.png)
+
+   We can use **Join controls** in AWS Clean Rooms to restrict data access to records that exist in both parties' databases only.
+
+   </details>
+
+* Members from which cities have the most average points redeemed on flight in Jan 2017?
+
+   <details>
+
+   <summary>Answer</summary>
+
+   Using the following query:
+
+   ```sql
+   SELECT "members"."city",
+      AVG("flight_history"."points redeemed") AS avg_points_redeemed
+   FROM "flight_history"
+   INNER JOIN "members" ON "flight_history"."loyalty number" = "members"."loyalty number"
+   WHERE "flight_history"."year" = '2017'
+      AND "flight_history"."month" = '1'
+   GROUP BY "members"."city"
+   ORDER BY avg_points_redeemed DESC
+   ```
+
+   We can see members from **Moncton**, **Peace River** and **Tremblant** have the most average points redeemed on flight in Jan 2017.
+
+   ![](/images/02-joining-tables/aggregate/38.png)
+
+   </details>
