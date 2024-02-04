@@ -70,9 +70,9 @@ The following are some terminologies we will use in this lab.
 
    In this session, we will create our first AWS Clean Rooms collaboration with a simple configured table.
 
-1. **Joining data from different data sources**
+1. **[Joining data from different data sources](/02-joining-tables)**
 
-   *TBC*
+   In this session, we will use AWS Clean Rooms to join multiple tables from different accounts.
 
 1. **Cryptographic Computing for Clean Rooms (C3R)**
 

@@ -1,0 +1,51 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  TableName:
+    Type: String
+  GlueDatabaseName:
+    Type: String
+  GlueTableName:
+    Type: String
+Resources:
+  ConfiguredTable:
+    Type: AWS::CleanRooms::ConfiguredTable
+    Properties:
+      Name: !Ref TableName
+      AnalysisMethod: DIRECT_QUERY
+      AllowedColumns:
+        - distance
+        - dollar cost points redeemed
+        - flights booked
+        - flights with companions
+        - loyalty number
+        - month
+        - points accumulated
+        - points redeemed
+        - total flights
+        - year
+      TableReference:
+        Glue:
+          DatabaseName: !Ref GlueDatabaseName
+          TableName: !Ref GlueTableName
+      AnalysisRules:
+        - Type: LIST
+          Policy:
+            V1:
+              List:
+                AllowedJoinOperators: []
+                JoinColumns:
+                  - loyalty number
+                ListColumns:
+                  - distance
+                  - dollar cost points redeemed
+                  - flights booked
+                  - flights with companions
+                  - month
+                  - points accumulated
+                  - points redeemed
+                  - total flights
+                  - year
+Outputs:
+  ConfiguredTableId:
+    Value: !GetAtt ConfiguredTable.ConfiguredTableIdentifier
