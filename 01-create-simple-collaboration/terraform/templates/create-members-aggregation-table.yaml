@@ -18,16 +18,16 @@ Resources:
         - clv
         - country
         - education
-        - enrollment month
-        - enrollment type
-        - enrollment year
+        - enrollment_month
+        - enrollment_type
+        - enrollment_year
         - gender
-        - loyalty card
-        - marital status
+        - loyalty_card
+        - marital_status
         - salary
-        - postal code
+        - postal_code
         - province
-        - loyalty number
+        - loyalty_number
       TableReference:
         Glue:
           DatabaseName: !Ref GlueDatabaseName
@@ -40,24 +40,24 @@ Resources:
                 AggregateColumns:
                   - Function: COUNT_DISTINCT
                     ColumnNames:
-                    - loyalty number
+                    - loyalty_number
                 DimensionColumns:
                   - city
                   - clv
                   - country
                   - education
-                  - enrollment month
-                  - enrollment type
-                  - enrollment year
+                  - enrollment_month
+                  - enrollment_type
+                  - enrollment_year
                   - gender
-                  - loyalty card
-                  - marital status
+                  - loyalty_card
+                  - marital_status
                   - salary
-                  - postal code
+                  - postal_code
                   - province
                 JoinColumns: []
                 OutputConstraints:
-                  - ColumnName: loyalty number
+                  - ColumnName: loyalty_number
                     Minimum: 100
                     Type: COUNT_DISTINCT
                 ScalarFunctions: []

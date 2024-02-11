@@ -12,6 +12,8 @@ If you want to skip it, please follow [automatic deployment](#automatic-deployme
 
 ### Manual Deployment
 
+1. Complete [**0. Prepare Glue database**](/00-prepare-glue-database) deployment.
+
 1. Login to the AWS Clean Rooms console using the `aws-clean-rooms-lab-account-1` credential.
 
    1. Click on **Create collaboration**
@@ -86,7 +88,7 @@ If you want to skip it, please follow [automatic deployment](#automatic-deployme
 
          * **Aggregate function**: `COUNT_DISTINCT`
 
-         * **Columns**: `loyalty number`
+         * **Columns**: `loyalty_number`
 
          * **Join controls**:
 
@@ -104,7 +106,7 @@ If you want to skip it, please follow [automatic deployment](#automatic-deployme
 
          * **Aggregation constraints**:
 
-            * **Column name**: `loyalty number`
+            * **Column name**: `loyalty_number`
 
             * **Minimum number of distinct values**: `100`
 
@@ -170,6 +172,8 @@ If you want to skip it, please follow [automatic deployment](#automatic-deployme
 
 1. Make sure you have set up your local environment correctly. [See instruction](/README.md#setup-your-environment)
 
+1. Complete [**0. Prepare Glue database**](/00-prepare-glue-database) deployment
+
 1. Run the following scripts to deploy resources
 
    ```bash
@@ -215,7 +219,7 @@ If you want to skip it, please follow [automatic deployment](#automatic-deployme
 
          ![](/images/01-create-simple-collaboration/23.png)
 
-      1. Turn on **Analysis builder UI** and try to build a query to get member count on each combination of **city**, **education**, **enrollment type**, **gender**, **loyalty card**, and **marital status**.
+      1. Turn on **Analysis builder UI** and try to build a query to get member count on each combination of **city**, **education**, **enrollment_type**, **gender**, **loyalty_card**, and **marital_status**.
 
          ![](/images/01-create-simple-collaboration/24.png)
 
@@ -233,7 +237,7 @@ If you want to skip it, please follow [automatic deployment](#automatic-deployme
 
       1. Click on the table `members` and view the analysis rule we've set on this table.
 
-         Note that we have set the **Aggregation threshold** on column `loyalty number` to `100`.
+         Note that we have set the **Aggregation threshold** on column `loyalty_number` to `100`.
 
          ![](/images/01-create-simple-collaboration/27.png)
 
@@ -245,21 +249,21 @@ If you want to skip it, please follow [automatic deployment](#automatic-deployme
 
       ```sql
       SELECT
-      	COUNT(DISTINCT "members"."loyalty number") as member_count,
+      	COUNT(DISTINCT "members"."loyalty_number") as member_count,
       	"members"."city",
       	"members"."education",
-      	"members"."enrollment type",
+      	"members"."enrollment_type",
       	"members"."gender",
-      	"members"."loyalty card",
-      	"members"."marital status"
+      	"members"."loyalty_card",
+      	"members"."marital_status"
       FROM "members"
       GROUP BY
       	"members"."city",
       	"members"."education",
-      	"members"."enrollment type",
+      	"members"."enrollment_type",
       	"members"."gender",
-      	"members"."loyalty card",
-      	"members"."marital status"
+      	"members"."loyalty_card",
+      	"members"."marital_status"
       ORDER BY member_count DESC;
       ```
 
@@ -267,7 +271,7 @@ If you want to skip it, please follow [automatic deployment](#automatic-deployme
 
       You will notice more than 2000 records compared to just a few we got previously.
 
-      This is because the analysis rule in our configured table states that only results with more than 100 distinct **loyalty number** can be returned.
+      This is because the analysis rule in our configured table states that only results with more than 100 distinct **loyalty_number** can be returned.
 
       So, the records less than 100 here were not shown in our previous query in AWS Clean Rooms.
 

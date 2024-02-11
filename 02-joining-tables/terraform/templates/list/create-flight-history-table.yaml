@@ -15,14 +15,14 @@ Resources:
       AnalysisMethod: DIRECT_QUERY
       AllowedColumns:
         - distance
-        - dollar cost points redeemed
-        - flights booked
-        - flights with companions
-        - loyalty number
+        - dollar_cost_points_redeemed
+        - flights_booked
+        - flights_with_companions
+        - loyalty_number
         - month
-        - points accumulated
-        - points redeemed
-        - total flights
+        - points_accumulated
+        - points_redeemed
+        - total_flights
         - year
       TableReference:
         Glue:
@@ -35,16 +35,16 @@ Resources:
               List:
                 AllowedJoinOperators: []
                 JoinColumns:
-                  - loyalty number
+                  - loyalty_number
                 ListColumns:
                   - distance
-                  - dollar cost points redeemed
-                  - flights booked
-                  - flights with companions
+                  - dollar_cost_points_redeemed
+                  - flights_booked
+                  - flights_with_companions
                   - month
-                  - points accumulated
-                  - points redeemed
-                  - total flights
+                  - points_accumulated
+                  - points_redeemed
+                  - total_flights
                   - year
 Outputs:
   ConfiguredTableId:

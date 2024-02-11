@@ -18,16 +18,16 @@ Resources:
         - clv
         - country
         - education
-        - enrollment month
-        - enrollment type
-        - enrollment year
+        - enrollment_month
+        - enrollment_type
+        - enrollment_year
         - gender
-        - loyalty card
-        - marital status
-        - postal code
+        - loyalty_card
+        - marital_status
+        - postal_code
         - province
         - salary
-        - loyalty number
+        - loyalty_number
       TableReference:
         Glue:
           DatabaseName: !Ref GlueDatabaseName
@@ -39,19 +39,19 @@ Resources:
               List:
                 AllowedJoinOperators: []
                 JoinColumns:
-                  - loyalty number
+                  - loyalty_number
                 ListColumns:
                   - city
                   - clv
                   - country
                   - education
-                  - enrollment month
-                  - enrollment type
-                  - enrollment year
+                  - enrollment_month
+                  - enrollment_type
+                  - enrollment_year
                   - gender
-                  - loyalty card
-                  - marital status
-                  - postal code
+                  - loyalty_card
+                  - marital_status
+                  - postal_code
                   - province
                   - salary
 Outputs:
