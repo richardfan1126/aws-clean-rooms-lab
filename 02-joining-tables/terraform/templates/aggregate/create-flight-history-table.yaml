@@ -15,14 +15,14 @@ Resources:
       AnalysisMethod: DIRECT_QUERY
       AllowedColumns:
         - distance
-        - dollar cost points redeemed
-        - flights booked
-        - flights with companions
-        - loyalty number
+        - dollar_cost_points_redeemed
+        - flights_booked
+        - flights_with_companions
+        - loyalty_number
         - month
-        - points accumulated
-        - points redeemed
-        - total flights
+        - points_accumulated
+        - points_redeemed
+        - total_flights
         - year
       TableReference:
         Glue:
@@ -36,28 +36,28 @@ Resources:
                 AggregateColumns:
                   - Function: AVG
                     ColumnNames:
-                    - points accumulated
-                    - points redeemed
+                    - points_accumulated
+                    - points_redeemed
                   - Function: SUM
                     ColumnNames:
-                    - points accumulated
-                    - points redeemed
+                    - points_accumulated
+                    - points_redeemed
                   - Function: COUNT_DISTINCT
                     ColumnNames:
-                    - loyalty number
+                    - loyalty_number
                 DimensionColumns:
                   - distance
-                  - dollar cost points redeemed
-                  - flights booked
-                  - flights with companions
+                  - dollar_cost_points_redeemed
+                  - flights_booked
+                  - flights_with_companions
                   - month
-                  - total flights
+                  - total_flights
                   - year
                 JoinColumns:
-                  - loyalty number
+                  - loyalty_number
                 JoinRequired: QUERY_RUNNER
                 OutputConstraints:
-                  - ColumnName: loyalty number
+                  - ColumnName: loyalty_number
                     Minimum: 10
                     Type: COUNT_DISTINCT
                 ScalarFunctions: []

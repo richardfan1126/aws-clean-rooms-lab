@@ -16,13 +16,13 @@ Resources:
       AllowedColumns:
         - city
         - country
-        - enrollment month
-        - enrollment type
-        - enrollment year
+        - enrollment_month
+        - enrollment_type
+        - enrollment_year
         - gender
-        - loyalty card
+        - loyalty_card
         - province
-        - loyalty number
+        - loyalty_number
       TableReference:
         Glue:
           DatabaseName: !Ref GlueDatabaseName
@@ -34,15 +34,15 @@ Resources:
               List:
                 AllowedJoinOperators: []
                 JoinColumns:
-                  - loyalty number
+                  - loyalty_number
                 ListColumns:
                   - city
                   - country
-                  - enrollment month
-                  - enrollment type
-                  - enrollment year
+                  - enrollment_month
+                  - enrollment_type
+                  - enrollment_year
                   - gender
-                  - loyalty card
+                  - loyalty_card
                   - province
 Outputs:
   ConfiguredTableId:
