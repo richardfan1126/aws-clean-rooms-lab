@@ -10,8 +10,8 @@ resource "aws_s3_bucket" "data_bucket_account_1" {
 
 resource "aws_s3_object" "members_data" {
   bucket = aws_s3_bucket.data_bucket_account_1.id
-  key    = "airline-loyalty-program/members/members.json"
-  source = "${path.module}/../dataset/members.json"
+  key    = "airline-loyalty-program/members/members.parquet"
+  source = "${path.module}/../dataset/members.parquet"
 }
 
 resource "aws_glue_catalog_database" "database_account_1" {
@@ -32,15 +32,15 @@ resource "aws_glue_catalog_table" "members_table" {
 
   storage_descriptor {
     location      = "s3://${aws_s3_bucket.data_bucket_account_1.id}/airline-loyalty-program/members/"
-    input_format  = "org.apache.hadoop.mapred.TextInputFormat"
-    output_format = "org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat"
+    input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
+    output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
 
     ser_de_info {
-      serialization_library = "org.openx.data.jsonserde.JsonSerDe"
+      serialization_library = "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe"
     }
 
     columns {
-      name = "loyalty number"
+      name = "loyalty_number"
       type = "string"
     }
 
@@ -60,7 +60,7 @@ resource "aws_glue_catalog_table" "members_table" {
     }
 
     columns {
-      name = "postal code"
+      name = "postal_code"
       type = "string"
     }
 
@@ -76,36 +76,36 @@ resource "aws_glue_catalog_table" "members_table" {
 
     columns {
       name = "salary"
-      type = "float"
+      type = "double"
     }
 
     columns {
-      name = "marital status"
+      name = "marital_status"
       type = "string"
     }
 
     columns {
-      name = "loyalty card"
+      name = "loyalty_card"
       type = "string"
     }
 
     columns {
       name = "clv"
-      type = "float"
+      type = "double"
     }
 
     columns {
-      name = "enrollment type"
+      name = "enrollment_type"
       type = "string"
     }
 
     columns {
-      name = "enrollment year"
+      name = "enrollment_year"
       type = "int"
     }
 
     columns {
-      name = "enrollment month"
+      name = "enrollment_month"
       type = "int"
     }
   }

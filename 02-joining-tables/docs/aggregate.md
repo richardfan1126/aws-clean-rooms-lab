@@ -96,7 +96,7 @@
 
             * **Allow table to be queried by itself**: `No, only overlap can be queried`
 
-            * **Specify join columns**: `loyalty number`
+            * **Specify join columns**: `loyalty_number`
 
             * **Specify allowed operators for matching**: *(Uncheck all options)*
          
@@ -108,7 +108,7 @@
 
          * **Aggregation constraints**:
 
-            * **Column name**: `loyalty number`
+            * **Column name**: `loyalty_number`
 
             * **Minimum number of distinct values**: `10`
 
@@ -200,21 +200,21 @@
 
          * **Aggregate function**: `AVG`
 
-           **Columns**: `points accumulated`, `points redeemed`
+           **Columns**: `points_accumulated`, `points_redeemed`
 
          * **Aggregate function**: `SUM`
 
-           **Columns**: `points accumulated`, `points redeemed`
+           **Columns**: `points_accumulated`, `points_redeemed`
 
          * **Aggregate function**: `COUNT DISTINCT`
 
-           **Columns**: `loyalty number`
+           **Columns**: `loyalty_number`
 
          * **Join controls**:
 
             * **Allow table to be queried by itself**: `No, only overlap can be queried`
 
-            * **Specify join columns**: `loyalty number`
+            * **Specify join columns**: `loyalty_number`
 
             * **Specify allowed operators for matching**: *(Uncheck all options)*
          
@@ -226,7 +226,7 @@
 
          * **Aggregation constraints**:
 
-            * **Column name**: `loyalty number`
+            * **Column name**: `loyalty_number`
 
             * **Minimum number of distinct values**: `10`
 
@@ -277,11 +277,11 @@
 1. We want to know how many customers have flights booked each month. Try running the following SQL:
 
    ```sql
-   SELECT COUNT(DISTINCT "flight_history"."loyalty number"),
+   SELECT COUNT(DISTINCT "flight_history"."loyalty_number"),
       "flight_history"."year",
       "flight_history"."month"
    FROM "flight_history"
-   WHERE "flight_history"."flights booked" > 0
+   WHERE "flight_history"."flights_booked" > 0
    GROUP BY "flight_history"."year",
       "flight_history"."month"
    ORDER BY "flight_history"."year",
@@ -301,12 +301,12 @@
 1. Now, let's run a modified query with an `INNER JOIN` between `flight_history` and `members` _(which is owned by this account)_a
 
    ```sql
-   SELECT COUNT(DISTINCT "flight_history"."loyalty number"),
+   SELECT COUNT(DISTINCT "flight_history"."loyalty_number"),
       "flight_history"."year",
       "flight_history"."month"
    FROM "flight_history"
-      INNER JOIN "members" ON "flight_history"."loyalty number" = "members"."loyalty number"
-   WHERE "flight_history"."flights booked" > 0
+      INNER JOIN "members" ON "flight_history"."loyalty_number" = "members"."loyalty_number"
+   WHERE "flight_history"."flights_booked" > 0
    GROUP BY "flight_history"."year",
       "flight_history"."month"
    ORDER BY "flight_history"."year",
@@ -327,9 +327,9 @@
 
    <summary>Answer</summary>
 
-   The 1st query does not have `INNER JOIN`, so it includes all records from table `flight_history` where `flights booked` is greater than 0.
+   The 1st query does not have `INNER JOIN`, so it includes all records from table `flight_history` where `flights_booked` is greater than 0.
 
-   The 2nd query has an `INNER JOIN` statement between `flight_history` and `members` tables, so it only includes records with `loyalty number` that exist in both tables.
+   The 2nd query has an `INNER JOIN` statement between `flight_history` and `members` tables, so it only includes records with `loyalty_number` that exist in both tables.
 
    If we login to `aws-clean-rooms-lab-account-2` and run the 1st query on Amazon Athena, we will get a result with a larger member count.
 
@@ -349,9 +349,9 @@
 
    ```sql
    SELECT "members"."city",
-      AVG("flight_history"."points redeemed") AS avg_points_redeemed
+      AVG("flight_history"."points_redeemed") AS avg_points_redeemed
    FROM "flight_history"
-   INNER JOIN "members" ON "flight_history"."loyalty number" = "members"."loyalty number"
+   INNER JOIN "members" ON "flight_history"."loyalty_number" = "members"."loyalty_number"
    WHERE "flight_history"."year" = '2017'
       AND "flight_history"."month" = '1'
    GROUP BY "members"."city"
