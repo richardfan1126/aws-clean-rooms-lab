@@ -18,6 +18,7 @@ resource "aws_cloudformation_stack" "collab_membership_account_1_list" {
 
   parameters = {
     CollaborationId = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab_list.id
+    RetainPolicy    = "Retain"
   }
 }
 
@@ -25,11 +26,13 @@ resource "aws_cloudformation_stack" "collab_membership_account_2_list" {
   provider = aws.account_2
 
   name          = "aws-clean-rooms-lab-collab-membership-list-${random_string.uid.id}"
-  template_body = file("${path.module}/templates/create-collaboration-membership-with-query.yaml")
+  template_body = file("${path.module}/templates/create-collaboration-membership.yaml")
 
   parameters = {
-    CollaborationId  = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab_list.id
-    ResultBucketName = data.terraform_remote_state.prepare_glue_database.outputs.query_result_bucket_account_2.id
+    CollaborationId    = aws_cleanrooms_collaboration.clean_rooms_lab_analysis_collab_list.id
+    CreateResultConfig = "True"
+    ResultBucketName   = data.terraform_remote_state.prepare_glue_database.outputs.query_result_bucket_account_2.id
+    RetainPolicy       = "Delete"
   }
 }
 

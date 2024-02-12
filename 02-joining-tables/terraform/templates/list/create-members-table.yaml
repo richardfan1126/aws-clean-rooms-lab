@@ -15,13 +15,18 @@ Resources:
       AnalysisMethod: DIRECT_QUERY
       AllowedColumns:
         - city
+        - clv
         - country
+        - education
         - enrollment_month
         - enrollment_type
         - enrollment_year
         - gender
         - loyalty_card
+        - marital_status
+        - postal_code
         - province
+        - salary
         - loyalty_number
       TableReference:
         Glue:
@@ -37,13 +42,18 @@ Resources:
                   - loyalty_number
                 ListColumns:
                   - city
+                  - clv
                   - country
+                  - education
                   - enrollment_month
                   - enrollment_type
                   - enrollment_year
                   - gender
                   - loyalty_card
+                  - marital_status
+                  - postal_code
                   - province
+                  - salary
 Outputs:
   ConfiguredTableId:
     Value: !GetAtt ConfiguredTable.ConfiguredTableIdentifier
