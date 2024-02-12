@@ -146,7 +146,7 @@
 
         1. Check the box to agree paying for the query compute costs, then click **Create membership**.
 
-        1. Verify the detail, then click **Create membership**.
+        1. Verify the details, then click **Create membership**.
 
          ![](/images/02-joining-tables/list/21.png)
 
@@ -221,3 +221,146 @@
          1. Click **Associate table**.
 
 ## Exercise
+
+1. Login to the AWS Clean Rooms console using the `aws-clean-rooms-lab-account-2` credential.
+
+1. Goto **clean_rooms_lab_collab_02-list** -> **Queries** and and scroll down to the query editor.
+
+   You will see 2 tables, one from the same AWS account and the other from the `flight-data-store` account.
+
+   ![](/images/02-joining-tables/list/28.png)
+
+1. We want to get a list of the members. Try running the following SQL:
+
+   ```sql
+   SELECT DISTINCT "members"."city",
+         "members"."clv",
+         "members"."country",
+         "members"."education",
+         "members"."enrollment_month",
+         "members"."enrollment_type",
+         "members"."enrollment_year",
+         "members"."gender",
+         "members"."loyalty_card",
+         "members"."marital_status",
+         "members"."postal_code",
+         "members"."province",
+         "members"."salary"
+   FROM  "members"
+   ```
+
+   It will return an error `Inner join to query runner table required for table members`
+
+   ![](/images/02-joining-tables/list/29.png)
+
+   ![](/images/02-joining-tables/list/30.png)
+
+   <details>
+
+   <summary>Why an inner join is required?</summary>
+
+   When using [List analysis rule](https://docs.aws.amazon.com/clean-rooms/latest/userguide/analysis-rules-list.html), at least one join with a configured table from the querying member is required.
+
+   The list analysis rule allows collaboration members to view the details of the records. If the inner join is not required, it is actually sharing the table with the collaborators.
+
+   So keep in mind, when using the List analysis rule, an inner join is required by default.
+
+   </details>
+
+1. Now, we want to know the demographic information of members who have redeemed more than 850 points in a month.
+
+   Let's run the following query:
+
+   ```sql
+   SELECT DISTINCT
+      "members"."loyalty_card",
+      "members"."enrollment_type",
+      "members"."enrollment_year",
+      "members"."enrollment_month",
+      "members"."gender",
+      "members"."country",
+      "members"."province",
+      "members"."city",
+      "flight_history"."year",
+      "flight_history"."month",
+      "flight_history"."points_redeemed"
+
+   FROM "flight_history"
+
+   INNER JOIN "members"
+      ON "flight_history"."loyalty_number" = "members"."loyalty_number"
+
+   WHERE
+      "flight_history"."points_redeemed" > 850
+   ```
+
+   ![](/images/02-joining-tables/list/31.png)
+
+   ![](/images/02-joining-tables/list/32.png)
+
+### Questions
+
+1. We are exposing too many details from the members table. How can we limit the airlines to see the members' living city?
+
+   <details>
+
+   <summary>Answer</summary>
+
+   To limit what the collaborator can see from the table, we can modify the **List Columns** under **List controls**.
+
+   Login to the member data source account (i.e., account 1), and modify the `members_list` configured table.
+
+   Under the `listColumns` field, remove all the columns except `city` so the collaborators can see the members' living city.
+
+   ![](/images/02-joining-tables/list/33.png)
+
+   Now, go back to account2 and run the previous query, you will find that the columns except `city` are not allowed in the select clause.
+
+   ![](/images/02-joining-tables/list/34.png)
+
+   </details>
+
+1. Can I set a rule to allow specific columns to be used as filters but not reveal them?
+
+   <details>
+
+   <summary>Answer</summary>
+
+   The short answer is **No**.
+
+   In the List analysis rule, **List Columns** is the only control on what columns can be used in **SELECT** and **WHERE** clauses. So, it is impossible to allow a column to be used as a filter but not reveal its content.
+
+   Take one step back. Unlike aggregation analysis rule, list analysis rule allows collaborator to view the content of each record. So, in theory, if a column is allowed to be used as a filter, it is equivalent to revealing its content.
+
+   Think about the following example:
+
+   ```sql
+   SELECT DISTINCT
+      "members"."loyalty_card",
+      "members"."enrollment_type",
+      "members"."enrollment_year",
+      "members"."enrollment_month",
+      "members"."gender",
+      "members"."country",
+      "members"."province",
+      "members"."city",
+      "flight_history"."year",
+      "flight_history"."month",
+      "flight_history"."points_redeemed"
+
+   FROM "flight_history"
+
+   INNER JOIN "members"
+      ON "flight_history"."loyalty_number" = "members"."loyalty_number"
+
+   WHERE
+      "flight_history"."points_redeemed" = 850
+   ```
+
+   If I run the above query, I can get a list of members.
+   
+   Even though I'm not selecting the `points_redeemed` column, but since I'm using a filter extracting members who have `"points_redeemed" = 850`.
+   
+   So, actually, I learned that those members have exactly 850 points redeemed in a month.
+
+   </details>
