@@ -76,7 +76,7 @@ The following are some terminologies we will use in this lab.
 
 1. **[Differential Privacy](/03-differential-privacy)**
 
-   *TBC*
+   In this session, we will explore AWS Clean Rooms Differential Privacy and experience how differential privacy can be applied to data collaboration.
 
 1. **Cryptographic Computing for Clean Rooms (C3R)**
 
