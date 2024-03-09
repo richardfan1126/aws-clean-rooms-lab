@@ -74,10 +74,10 @@ The following are some terminologies we will use in this lab.
 
    In this session, we will use AWS Clean Rooms to join multiple tables from different accounts.
 
-1. **Cryptographic Computing for Clean Rooms (C3R)**
+1. **[Differential Privacy](/03-differential-privacy)**
 
    *TBC*
 
-1. **Differential Privacy**
+1. **Cryptographic Computing for Clean Rooms (C3R)**
 
    *TBC*
