@@ -26,6 +26,8 @@ Although we can use the AWS Clean Rooms Aggregate analysis rule to limit the que
 
 If we allow the data consumers to run unlimited queries, they can probably identify an individual from a small group by repeating the queries and comparing each result.
 
+<a id="scenario-example"></a>
+
 ```sql
 SELECT COUNT(DISTINCT "loyalty_number")
 FROM "members";
@@ -257,3 +259,87 @@ So, in this session, only manual deployment is available.
       1. Verify the detail, then click **Create membership**.
 
          ![](/images/03-differential-privacy/28.png)
+
+## Exercise
+
+1. Login to the AWS Clean Rooms console using the `aws-clean-rooms-lab-account-2` credential.
+
+1. Goto **clean_rooms_lab_collab_02** -> **Queries** and and scroll down to the query editor.
+
+   Under the **Tables** session, you can see the privacy budget used in this collaboration and the estimated remaining aggregate functions.
+
+   ![](/images/03-differential-privacy/29.png)
+
+   1. Click **View impact**. You can see the details of the differential privacy parameters
+
+      ![](/images/03-differential-privacy/30.png)
+
+      You can also click on the estimation to see the breakdown for different aggregation functions.
+
+      ![](/images/03-differential-privacy/31.png)
+
+      <details>
+
+      <summary>Question: Why the estimated remaining queries for each function are different?</summary>
+
+      The amount of information a query exposes differs depending on the aggregation function used.
+
+      The more information a query exposes, the more privacy budget will be consumed, and the amount of query that can be run is lower.
+
+      The `COUNT DISTINCT` function only tells us the number of distinct values in the table, so it consumes the least privacy budget.
+
+      The `SUM` function uses the value of a record (e.g., `salary` of the member) to perform the calculation, so it consumes more privacy budget than the `COUNT` AND `COUNT DISTINCT` function.
+
+      The `AVG` function combines `SUM` and `COUNT` functions, so it consumes the most privacy budget.
+
+      </details>
+
+   1. Run the following query
+
+      ```sql
+      SELECT COUNT(DISTINCT "members"."loyalty_number")
+      FROM "members"
+      ```
+
+      ![](/images/03-differential-privacy/32.png)
+
+      After the query completes, look at the differential privacy summary under **Tables** session.
+
+      You can see the amount of remaining aggregate functions has decreased.
+
+      ![](/images/03-differential-privacy/33.png)
+
+   1. Run the same query again.
+
+      Comparing the results of 2 query runs, we will notice a slight difference.
+
+      This is due to the noise added to the result.
+
+      <details>
+
+      <summary>Question: How can the added noise help protect privacy?</summary>
+
+      Consider the [example](#scenario-example) in the Scenario section.
+
+      ```sql
+      SELECT COUNT(DISTINCT "loyalty_number")
+      FROM "members";
+      ```
+
+      ```sql
+      SELECT COUNT(DISTINCT "loyalty_number")
+      FROM "members"
+      WHERE "city" <> 'A Very Small Town';
+      ```
+
+      When differential privacy is applied, the first query's result may not be exactly `300`. Because of the added noise, it may be `295`, `301`, `310`, etc.
+
+      Similarly, the result of the second query may not be exactly `280` too. It may be `290`, `270`, or even `300`.
+
+      Data consumers cannot confidently say how many members are from the specified small town by looking at the result.
+
+      Actually, they cannot even tell if any member from that town exists.
+
+      The added noise protects individuals' privacy by adding a small amount of noise so data consumers cannot infer individuals' data from a small subset of the database.
+
+      </details>
