@@ -340,6 +340,78 @@ So, in this session, only manual deployment is available.
 
       Actually, they cannot even tell if any member from that town exists.
 
-      The added noise protects individuals' privacy by adding a small amount of noise so data consumers cannot infer individuals' data from a small subset of the database.
+      Differential privacy protects individuals' privacy by adding a small amount of noise so data consumers cannot infer individuals' data from a small subset of the database.
 
       </details>
+
+   1. Now, let's run the following query to get the average salary of all members
+
+      ```sql
+      SELECT AVG("members"."salary")
+      FROM "members"
+      ```
+
+      ![](/images/03-differential-privacy/34.png)
+
+      After the query completes, look at the differential privacy summary under **Tables** session.
+
+      The decrease of remaining aggregate functions is larger than running `COUNT DISTINCT` queries. This is because the privacy budget consumed by `AVG` is more than `COUNT DISTINCT`.
+
+      ![](/images/03-differential-privacy/35.png)
+
+1. Now, let's log in to the AWS Clean Rooms console using the `aws-clean-rooms-lab-account-1` credential.
+
+   We will set up a new differential privacy policy with a smaller privacy budget.
+
+   1. In the AWS Clean Rooms console, click the collaboration `clean_rooms_lab_collab_03`
+
+      Under **Table** tab, click **Delete** beside **Differential privacy policy**.
+
+      Then click **Delete** in the popup box.
+
+      ![](/images/03-differential-privacy/36.png)
+
+      ![](/images/03-differential-privacy/37.png)
+
+   1. Go back to the collaboration **Tables** tab, Click **Configure differential privacy policy**
+
+      ![](/images/03-differential-privacy/38.png)
+
+   1. This time, we will set the **Privacy budget** as `1`.
+
+      After setting the Privacy budget, click **Configure**.
+
+      ![](/images/03-differential-privacy/39.png)
+
+   1. Now, let's login to AWS Clean Rooms console again using the `aws-clean-rooms-lab-account-1` credential.
+
+      Go to the **Query** tab of the collaboration, you will see the aggregate functions remaining for the new differential privacy policy.
+
+      ![](/images/03-differential-privacy/40.png)
+
+   1. Let's run the following query again
+
+      ```sql
+      SELECT AVG("members"."salary")
+      FROM "members"
+      ```
+
+      ![](/images/03-differential-privacy/34.png)
+
+      After the query completes, look at the differential privacy summary under **Tables** session.
+
+      You will see that the remaining aggregate functions have decreased to nearly 0.
+
+      ![](/images/03-differential-privacy/41.png)
+
+   1. Let's rerun the query.
+
+      This time, the query will return an error message saying we don't have enough aggregations remaining to run this query.
+
+      ![](/images/03-differential-privacy/42.png)
+
+      This is because the first query has already used all the privacy budget the policy allows; further queries are not allowed.
+
+      _(If the remaining aggregate functions is not 0 after the first query, try run the query again until it hit 0. With a small privacy budget allowed, it should quickly become 0.)_
+
+1. Try running the query you have used in [Session 1](/01-create-simple-collaboration/) and see how the results differ with and without differential privacy.
