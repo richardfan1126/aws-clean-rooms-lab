@@ -163,3 +163,97 @@ So, in this session, only manual deployment is available.
             ![](/images/03-differential-privacy/16.png)
 
          1. Click **Associate table**.
+
+   1. After configuring the table association, you will see a warning message: `Differential privacy policy required` beside the table name.
+
+      ![](/images/03-differential-privacy/17.png)
+
+      1. Click **Configure differential privacy policy**
+
+      1. In the configuration page, there are 2 parameters you can configure:
+
+         * **Privacy budget**
+
+            A smaller privacy budget means fewer queries can be run, but it can minimize privacy loss.
+
+         * **Noise added per query**
+
+            More noise means the query results are less accurate but consume less privacy budget.
+
+         ![](/images/03-differential-privacy/18.png)
+
+      1. Click on the estimate of **Resulting utility per month**
+
+         On the right-hand side, you can preview how different configurations affect the number of queries and the query results.
+
+         E.g., When tuning up the Noise, we can run more queries, but the result accuracy will decrease.
+
+         ![](/images/03-differential-privacy/19.png)
+
+         ![](/images/03-differential-privacy/20.png)
+
+      1. Use the following default settings, then click **Configure**
+
+         * **Privacy budget**: `10`
+
+         * **Refresh privacy budget monthly**: (Checked)
+
+         * **Noise added per query**: `30`
+
+      1. You will see that the differential privacy policy has been applied to the collaboration.
+
+         Click on the warning message `No - accounts haven't been allowed`, then click `Edit analysis rule`
+
+         ![](/images/03-differential-privacy/21.png)
+
+      1. Add the account ID of the data consumer (i.e., account 2) into the Analysis rule definition, then click **Save changes**
+
+         Replace `<account_id_of_data_consumer>` with the account ID.
+
+         ```json
+         {
+            ...
+            "allowedAnalysisProviders": [
+               "<account_id_of_data_consumer>"
+            ],
+            ...
+         }
+         ```
+
+         ![](/images/03-differential-privacy/22.png)
+
+1. Login to the AWS Clean Rooms console using the `aws-clean-rooms-lab-account-2` credential.
+
+   1. In the **Collaborations** page, you will find a collaboration available to join. Click on it.
+
+      ![](/images/03-differential-privacy/23.png)
+
+      1. This is the collaboration we've just created in account 1.
+
+         Review it, then click **Create membership**.
+
+         ![](/images/03-differential-privacy/24.png)
+
+      1. Input the following details:
+
+         * **Query logging**: `Turn on`
+
+         * **Query results settings defaults**:
+
+            * **Set default settings now**: *(Checked)*
+
+            * **Results destination in Amazon S3**: `s3://<name_of_result_bucket_created_in_session_00>`
+
+            * **Result format**: `CSV`
+
+         ![](/images/03-differential-privacy/25.png)
+
+         ![](/images/03-differential-privacy/26.png)
+
+      1. Check the box to agree paying for the query compute costs, then click **Create membership**.
+
+         ![](/images/03-differential-privacy/27.png)
+
+      1. Verify the detail, then click **Create membership**.
+
+         ![](/images/03-differential-privacy/28.png)
