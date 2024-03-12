@@ -4,6 +4,11 @@ In this session, we will create our first AWS Clean Rooms collaboration.
 
 We will also create a simple configured table over the `members` table, restricting the data user to using aggregation queries only.
 
+* [Setup](#setup)
+   + [Manual Deployment](#manual-deployment)
+   + [Automatic Deployment](#automatic-deployment)
+* [Exercise](#exercise)
+
 ## Setup
 
 In this part, we will walk through the AWS Clean Rooms console to create the collaboration and configured table.

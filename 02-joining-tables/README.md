@@ -4,6 +4,12 @@ In this session, we will use AWS Clean Rooms to join multiple tables from differ
 
 We will be creating 2 collaborations, using [**Aggregation**](https://docs.aws.amazon.com/clean-rooms/latest/userguide/analysis-rules-aggregation.html) and [**List**](https://docs.aws.amazon.com/clean-rooms/latest/userguide/analysis-rules-list.html) analysis rule respectively.
 
+* [Scenario](#scenario)
+* [Setup](#setup)
+   + [Manual Deployment](#manual-deployment)
+   + [Automatic Deployment](#automatic-deployment)
+* [Sub session](#sub-session)
+
 ## Scenario
 
 In most airlines, the loyalty program and the flights are operated by the same company.

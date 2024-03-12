@@ -2,6 +2,9 @@
 
 This session is to create the AWS Glue databases, which we can use in the lab.
 
+* [Setup](#setup)
+* [Exercise](#exercise)
+
 ## Setup
 
 This session is not part of the lab. You just need to deploy the Terraform stack and everything will be setup.

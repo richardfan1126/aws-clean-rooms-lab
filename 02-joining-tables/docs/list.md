@@ -1,5 +1,10 @@
 # Joining data from different data sources - List analysis rule
 
+* [Setup](#setup)
+   + [Manual Deployment](#manual-deployment)
+* [Exercise](#exercise)
+   + [Questions](#questions)
+
 ## Setup
 
 ### Manual Deployment

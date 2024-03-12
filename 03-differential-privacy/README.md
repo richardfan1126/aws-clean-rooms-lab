@@ -2,6 +2,12 @@
 
 In this session, we will explore [AWS Clean Rooms Differential Privacy](https://docs.aws.amazon.com/clean-rooms/latest/userguide/differential-privacy.html) and experience how differential privacy can be applied to data collaboration.
 
+* [What is Differential Privacy?](#what-is-differential-privacy)
+* [Scenario](#scenario)
+* [Setup](#setup)
+   + [Manual Deployment](#manual-deployment)
+* [Exercise](#exercise)
+
 ## What is Differential Privacy?
 
 Differential Privacy is a statistical measurement of how much an individual’s privacy is lost when exposing the data.
@@ -383,7 +389,7 @@ So, in this session, only manual deployment is available.
 
       ![](/images/03-differential-privacy/39.png)
 
-   1. Now, let's login to AWS Clean Rooms console again using the `aws-clean-rooms-lab-account-1` credential.
+   1. Now, let's login to AWS Clean Rooms console again using the `aws-clean-rooms-lab-account-2` credential.
 
       Go to the **Query** tab of the collaboration, you will see the aggregate functions remaining for the new differential privacy policy.
 
