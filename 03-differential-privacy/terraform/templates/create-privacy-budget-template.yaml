@@ -1,0 +1,21 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  AutoRefresh:
+    Type: String
+  MembershipId:
+    Type: String
+  Epsilon:
+    Type: Number
+  UsersNoisePerQuery:
+    Type: Number
+Resources:
+  PrivacyBudgetTemplate:
+    Type: AWS::CleanRooms::PrivacyBudgetTemplate
+    Properties:
+      AutoRefresh: !Ref AutoRefresh
+      MembershipIdentifier: !Ref MembershipId
+      Parameters: 
+        Epsilon: !Ref Epsilon
+        UsersNoisePerQuery: !Ref UsersNoisePerQuery
+      PrivacyBudgetType: DIFFERENTIAL_PRIVACY

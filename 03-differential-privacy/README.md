@@ -6,6 +6,7 @@ In this session, we will explore [AWS Clean Rooms Differential Privacy](https://
 * [Scenario](#scenario)
 * [Setup](#setup)
    + [Manual Deployment](#manual-deployment)
+   + [Automatic Deployment](#automatic-deployment)
 * [Exercise](#exercise)
 
 ## What is Differential Privacy?
@@ -54,9 +55,9 @@ To prevent this, the member data source company can utilize Differential Privacy
 
 ## Setup
 
-AWS Clean Rooms Differential Privacy is still in preview, and there is no CloudFormation or Terraform module for it yet.
+In this part, we will walk through the AWS Clean Rooms console to create the collaboration and configured table for Differential Privacy.
 
-So, in this session, only manual deployment is available.
+If you want to skip it, please follow [automatic deployment](#automatic-deployment)
 
 ### Manual Deployment
 
@@ -265,6 +266,20 @@ So, in this session, only manual deployment is available.
       1. Verify the detail, then click **Create membership**.
 
          ![](/images/03-differential-privacy/28.png)
+
+### Automatic Deployment
+
+1. Make sure you have set up your local environment correctly. [See instruction](/README.md#setup-your-environment)
+
+1. Complete [**0. Prepare Glue database**](/00-prepare-glue-database) deployment
+
+1. Run the following scripts to deploy resources
+
+   ```bash
+   cd 03-differential-privacy/terraform/
+   terraform init
+   terraform apply -auto-approve
+   ```
 
 ## Exercise
 

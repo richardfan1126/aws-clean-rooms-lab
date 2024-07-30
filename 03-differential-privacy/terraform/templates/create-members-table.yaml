@@ -1,0 +1,51 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  TableName:
+    Type: String
+  GlueDatabaseName:
+    Type: String
+  GlueTableName:
+    Type: String
+  DataConsumerAccountId:
+    Type: String
+Resources:
+  ConfiguredTable:
+    Type: AWS::CleanRooms::ConfiguredTable
+    Properties:
+      Name: !Ref TableName
+      AnalysisMethod: DIRECT_QUERY
+      AllowedColumns:
+        - city
+        - clv
+        - country
+        - education
+        - enrollment_month
+        - enrollment_type
+        - enrollment_year
+        - gender
+        - loyalty_card
+        - marital_status
+        - salary
+        - postal_code
+        - province
+        - loyalty_number
+      TableReference:
+        Glue:
+          DatabaseName: !Ref GlueDatabaseName
+          TableName: !Ref GlueTableName
+      AnalysisRules:
+        - Type: CUSTOM
+          Policy:
+            V1:
+              Custom:
+                DifferentialPrivacy:
+                  Columns:
+                    - Name: loyalty_number
+                AllowedAnalyses:
+                  - ANY_QUERY
+                AllowedAnalysisProviders:
+                  - !Ref DataConsumerAccountId
+Outputs:
+  ConfiguredTableId:
+    Value: !GetAtt ConfiguredTable.ConfiguredTableIdentifier

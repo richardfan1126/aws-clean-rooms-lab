@@ -1,0 +1,44 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  CollaborationId:
+    Type: String
+  CreateResultConfig:
+    Type: String
+    AllowedValues:
+      - "True"
+      - "False"
+    Default: "False"
+  ResultBucketName:
+    Type: String
+    Default: ""
+  RetainPolicy:
+    Type: String
+    AllowedValues:
+      - Delete
+      - Retain
+    Default: Retain
+Conditions:
+  IsCreateResultConfig: !Equals 
+    - !Ref CreateResultConfig
+    - "True"
+Resources:
+  CollaborationMembership:
+    Type: AWS::CleanRooms::Membership
+    DeletionPolicy: !Ref RetainPolicy
+    UpdateReplacePolicy: !Ref RetainPolicy
+    Properties:
+      CollaborationIdentifier: !Ref CollaborationId
+      QueryLogStatus: ENABLED
+      DefaultResultConfiguration:
+        !If
+        - IsCreateResultConfig
+        - 
+          OutputConfiguration:
+            S3:
+              Bucket: !Ref ResultBucketName
+              ResultFormat: CSV
+        - !Ref "AWS::NoValue"
+Outputs:
+  MembershipId:
+    Value: !GetAtt CollaborationMembership.MembershipIdentifier
