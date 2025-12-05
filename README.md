@@ -14,11 +14,36 @@ By using AWS Clean Rooms, the lab will showcase how data analysts can utilize da
 
 * 2 AWS accounts
 * Admin access on each AWS account (Both console and API access)
-* Terraform
+* **Infrastructure as Code Tool** - Choose one:
+  * **Terraform** (original implementation in session directories)
+  * **AWS CDK** (AWS-native implementation in `/cdk` directory) - **NEW!**
+
+## Deployment Options
+
+This lab supports two infrastructure deployment methods:
+
+### Option 1: Terraform (Original)
+
+The Terraform templates are located in each session directory (`00-prepare-glue-database`, `01-create-simple-collaboration`, etc.). Follow the session-specific README files for Terraform deployment instructions.
+
+### Option 2: AWS CDK (AWS-Native)
+
+**NEW:** A complete AWS CDK implementation is available in the `/cdk` directory. This provides an AWS-native approach using Python.
+
+**Benefits of CDK:**
+- Type-safe infrastructure code
+- Better integration with AWS services
+- No need for separate CloudFormation templates
+- More programmatic control
+
+**To use CDK:**
+1. Navigate to the `/cdk` directory
+2. Follow the setup instructions in [`/cdk/README.md`](/cdk/README.md)
+3. See the comprehensive [`/cdk/DEPLOYMENT_GUIDE.md`](/cdk/DEPLOYMENT_GUIDE.md) for deployment steps
 
 ### Setup your environment
 
-To deploy resources efficiently, the Terraform templates in this lab will be using 2 AWS profiles named:
+Both Terraform and CDK deployments use 2 AWS profiles named:
 
 * `aws-clean-rooms-lab-account-1`
 
